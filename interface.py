@@ -1,51 +1,68 @@
 from playlist import build_playlist, songs
 
 
-def display(node, i, total):
+def mostrar(nodo, i, total, shuffle):
+    estado = 'ON' if shuffle else 'OFF'
     print('\n' + '=' * 40)
     print(f'  Now Playing ({i}/{total})')
     print('=' * 40)
-    print(f'  Song:   {node.data["song"]}')
-    print(f'  Artist: {node.data["artist"]}')
-    print(f'  Album:  {node.data["album"]}')
+    print(f'  Song:   {nodo.data["song"]}')
+    print(f'  Artist: {nodo.data["artist"]}')
+    print(f'  Album:  {nodo.data["album"]}')
     print('=' * 40)
-    print('  [n] Next   [p] Previous   [q] Quit')
+    print(f'  [n] Next   [p] Previous   [s] Shuffle ({estado})   [q] Quit')
     print('=' * 40)
+
+
+def buscar_indice(lista, objetivo):
+    i = 1
+    nodo = lista.start
+    while nodo is not objetivo:
+        nodo = nodo.next
+        i += 1
+    return i
 
 
 def run():
-    pl = build_playlist(songs)
-    total = len(pl)
-    current = pl.start
+    lista = build_playlist(songs)
+    total = len(lista)
+    actual = lista.start
     i = 1
 
-    display(current, i, total)
+    mostrar(actual, i, total, lista.shuffle)
 
     while True:
-        action = input('\n> ').strip().lower()
+        accion = input('\n> ').strip().lower()
 
-        if action == 'n':
-            if current.next is None:
+        if accion == 'n':
+            siguiente = lista.next_node(actual)
+            if siguiente is None:
                 print('  Ya termino la playlist.')
             else:
-                current = current.next
-                i += 1
-                display(current, i, total)
+                actual = siguiente
+                i = buscar_indice(lista, actual)
+                mostrar(actual, i, total, lista.shuffle)
 
-        elif action == 'p':
-            if current.prev is None:
+        elif accion == 'p':
+            anterior = lista.prev_node(actual)
+            if anterior is None:
                 print('  Already at the first song.')
             else:
-                current = current.prev
-                i -= 1
-                display(current, i, total)
+                actual = anterior
+                i = buscar_indice(lista, actual)
+                mostrar(actual, i, total, lista.shuffle)
 
-        elif action == 'q':
+        elif accion == 's':
+            lista.toggle_shuffle()
+            print(f'\n  Shuffle {"ON" if lista.shuffle else "OFF"}.')
+            mostrar(actual, i, total, lista.shuffle)
+
+        elif accion == 'q':
             print('\n  Adios!')
             break
 
         else:
-            print('  Invalid input. Use n, p, or q.')
+            print('  Invalid input. Use n, p, s, or q.')
 
 
 run()
