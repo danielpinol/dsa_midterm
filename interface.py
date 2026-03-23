@@ -1,9 +1,9 @@
 from playlist import build_playlist, songs
 
 
-def display(node: 'Node', index: int, total: int):
+def display(node, i, total):
     print('\n' + '=' * 40)
-    print(f'  Now Playing ({index}/{total})')
+    print(f'  Now Playing ({i}/{total})')
     print('=' * 40)
     print(f'  Song:   {node.data["song"]}')
     print(f'  Artist: {node.data["artist"]}')
@@ -14,31 +14,31 @@ def display(node: 'Node', index: int, total: int):
 
 
 def run():
-    playlist = build_playlist(songs)
-    total = len(playlist)
-    current = playlist.start
-    index = 1
+    pl = build_playlist(songs)
+    total = len(pl)
+    current = pl.start
+    i = 1
 
-    display(current, index, total)
+    display(current, i, total)
 
     while True:
         action = input('\n> ').strip().lower()
 
         if action == 'n':
             if current.next is None:
-                print('  Ya termino la playlist')
+                print('  Ya termino la playlist.')
             else:
                 current = current.next
-                index += 1
-                display(current, index, total)
+                i += 1
+                display(current, i, total)
 
         elif action == 'p':
             if current.prev is None:
                 print('  Already at the first song.')
             else:
                 current = current.prev
-                index -= 1
-                display(current, index, total)
+                i -= 1
+                display(current, i, total)
 
         elif action == 'q':
             print('\n  Adios!')
